@@ -60,7 +60,7 @@ mpc.connectWebSocket('ws://localhost:8000/');
 
 ### API
 
-[Typedoc](http://typedoc.org/)-generated API documentation is available [here](https://hbenl.github.io/mpc-js/typedoc/classes/_mpc_.mpc.html).
+[Typedoc](http://typedoc.org/)-generated API documentation is available [here](https://hbenl.github.io/mpc-js-core/typedoc/classes/_mpccore_.mpccore.html).
 
 ### Events
 
