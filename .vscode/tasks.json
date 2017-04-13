@@ -1,0 +1,19 @@
+{
+	"version": "0.1.0",
+	"command": "${workspaceRoot}/node_modules/.bin/tsc",
+	"isShellCommand": true,
+	"tasks": [
+		{
+			"taskName": "build",
+			"isBuildCommand": true,
+			"suppressTaskName": true,
+			"problemMatcher": "$tsc"
+		},
+		{
+			"taskName": "watch",
+			"args": [ "-w" ],
+			"suppressTaskName": true,
+			"problemMatcher": "$tsc"
+		}
+	]
+}
