@@ -27,10 +27,10 @@
     "url": "https://github.com/hbenl/mpc-js-node/issues"
   },
   "dependencies": {
-    "@types/node": "^7.0.12",
-    "mpc-js-core": "^1.0.0"
+    "@types/node": "^8.0.19",
+    "mpc-js-core": "^1.2.0"
   },
   "devDependencies": {
-    "typescript": "^2.2.2"
+    "typescript": "~2.4.2"
   }
 }
