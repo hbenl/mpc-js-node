@@ -67,6 +67,9 @@ mpc.connectWebSocket('ws://localhost:8000/');
 The following events are emitted by the client:
 
 * `ready` - The connection to mpd has been initialized
+* `socket-error` - An error event from the underlying socket implementation, the error is passed
+  to the event listeners
+* `socket-end` - The socket was closed by mpd
 * `changed` - There was a change in one or more of mpd's subsystems, the list of changed subsystems
   is passed to the event listeners. This list may contain:
   * `database` - the song database has been modified after `update`
@@ -97,6 +100,7 @@ mpc.connectUnixSocket('/run/mpd/socket');
 // ... or a WebSocket (when running in a browser)
 mpc.connectWebSocket('ws://localhost:8000/');
 ```
+The `connect` methods will return a Promise that is resolved when the connection to mpd has been established or rejected when the connection attempt fails.
 
 ### Controlling playback
 
