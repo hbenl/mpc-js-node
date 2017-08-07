@@ -6,36 +6,32 @@ interface Deferred {
 	reject: (err: any) => void;
 }
 
-export class TcpSocketWrapper implements SocketWrapper {
+export class NodeSocketWrapper implements SocketWrapper {
 
-	private hostname: string;
-	private port: number;
 	private socket?: net.Socket;
 	private deferred?: Deferred;
+	private socketListeners: [string, (arg: any) => void][] = [];
 
-	constructor(hostname: string, port: number) {
-		this.hostname = hostname;
-		this.port = port;
-	}
+	constructor(private socketFactory: () => net.Socket) {}
 
 	connect(receive: (msg: string) => void, emit?: (eventName: string, arg?: any) => void): Promise<void> {
 
-		this.socket = net.connect(this.port, this.hostname);
+		this.socket = this.socketFactory();
 		this.socket.setEncoding('utf8');
 
 		let promise = new Promise<void>((resolve, reject) => {
 			this.deferred = { resolve, reject };
 		});
 
-		this.socket.on('data', (msg: string) => {
+		this.socketListeners.push(['data', (msg: string) => {
 			if (this.deferred) {
 				this.deferred.resolve();
 				this.deferred = undefined;
 			}
 			receive(msg);
-		});
+		}]);
 
-		this.socket.on('error', (err) => {
+		this.socketListeners.push(['error', (err) => {
 			if (this.deferred) {
 				this.deferred.reject(err);
 				this.deferred = undefined;
@@ -43,9 +39,9 @@ export class TcpSocketWrapper implements SocketWrapper {
 			if (emit) {
 				emit('socket-error', err);
 			}
-		});
+		}]);
 
-		this.socket.on('end', () => {
+		this.socketListeners.push(['end', () => {
 			if (this.deferred) {
 				this.deferred.reject(new Error('Socket closed by server'));
 				this.deferred = undefined;
@@ -53,7 +49,10 @@ export class TcpSocketWrapper implements SocketWrapper {
 			if (emit) {
 				emit('socket-end');
 			}
-		});
+		}]);
+
+		this.socketListeners.forEach((socketListener) =>
+			this.socket.on(socketListener[0], socketListener[1]));
 
 		return promise;
 	}
@@ -63,68 +62,9 @@ export class TcpSocketWrapper implements SocketWrapper {
 	}
 
 	disconnect(): void {
-		this.socket.removeAllListeners();
-		this.socket.end();
-		this.socket = undefined;
-	}
-}
-
-export class UnixSocketWrapper implements SocketWrapper {
-
-	private path: string;
-	private socket?: net.Socket;
-	private deferred?: Deferred;
-
-	constructor(path: string) {
-		this.path = path;
-	}
-
-	connect(receive: (msg: string) => void, emit?: (eventName: string, arg?: any) => void): Promise<void> {
-
-		this.socket = net.connect(this.path);
-		this.socket.setEncoding('utf8');
-
-		let promise = new Promise<void>((resolve, reject) => {
-			this.deferred = { resolve, reject };
-		});
-
-		this.socket.on('data', (msg: string) => {
-			if (this.deferred) {
-				this.deferred.resolve();
-				this.deferred = undefined;
-			}
-			receive(msg);
-		});
-
-		this.socket.on('error', (err) => {
-			if (this.deferred) {
-				this.deferred.reject(err);
-				this.deferred = undefined;
-			}
-			if (emit) {
-				emit('socket-error', err);
-			}
-		});
-
-		this.socket.on('end', () => {
-			if (this.deferred) {
-				this.deferred.reject(new Error('Socket closed by server'));
-				this.deferred = undefined;
-			}
-			if (emit) {
-				emit('socket-end');
-			}
-		});
-
-		return promise;
-	}
-
-	send(msg: string): void {
-		this.socket.write(msg);
-	}
-
-	disconnect(): void {
-		this.socket.removeAllListeners();
+		this.socketListeners.forEach((socketListener) =>
+			this.socket.removeListener(socketListener[0], socketListener[1]));
+		this.socketListeners = [];
 		this.socket.end();
 		this.socket = undefined;
 	}
