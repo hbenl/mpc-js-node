@@ -11,7 +11,11 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prepublish": "rm -Rf lib && tsc",
-    "build": "tsc"
+    "reinstall": "rimraf node_modules package-lock.json && npm install",
+    "clean": "rimraf out vscode-test-explorer-*.vsix",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "rebuild": "npm run clean && npm run build"
   },
   "keywords": [
     "mpd"
@@ -31,6 +35,7 @@
     "mpc-js-core": "^1.2.0"
   },
   "devDependencies": {
+    "rimraf": "^2.6.2",
     "typescript": "~2.4.2"
   }
 }
