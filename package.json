@@ -32,10 +32,10 @@
   },
   "dependencies": {
     "@types/node": "^8.0.19",
-    "mpc-js-core": "^1.2.0"
+    "mpc-js-core": "^1.2.2"
   },
   "devDependencies": {
     "rimraf": "^2.6.2",
-    "typescript": "~2.4.2"
+    "typescript": "~2.9.1"
   }
 }
