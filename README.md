@@ -30,7 +30,7 @@ import { MPC } from 'mpc-js';
 ```
 or
 ```
-var MPC = require('mpc-js').MPC;
+const MPC = require('mpc-js').MPC;
 ```
 
 ### UMD package
@@ -89,7 +89,7 @@ The following events are emitted by the client:
 
 Create a client and connect to mpd
 ```
-var mpc = new MPC();
+const mpc = new MPC();
 
 // connect via TCP (when running in node.js)
 mpc.connectTCP('localhost', 6600);

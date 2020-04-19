@@ -19,7 +19,7 @@ export class NodeSocketWrapper implements SocketWrapper {
 		this.socket = this.socketFactory();
 		this.socket.setEncoding('utf8');
 
-		let promise = new Promise<void>((resolve, reject) => {
+		const promise = new Promise<void>((resolve, reject) => {
 			this.deferred = { resolve, reject };
 		});
 
@@ -31,7 +31,7 @@ export class NodeSocketWrapper implements SocketWrapper {
 			receive(msg);
 		}]);
 
-		this.socketListeners.push(['error', (err) => {
+		this.socketListeners.push(['error', err => {
 			if (this.deferred) {
 				this.deferred.reject(err);
 				this.deferred = undefined;
@@ -51,7 +51,7 @@ export class NodeSocketWrapper implements SocketWrapper {
 			}
 		}]);
 
-		this.socketListeners.forEach((socketListener) =>
+		this.socketListeners.forEach(socketListener =>
 			this.socket.on(socketListener[0], socketListener[1]));
 
 		return promise;
@@ -62,7 +62,7 @@ export class NodeSocketWrapper implements SocketWrapper {
 	}
 
 	disconnect(): void {
-		this.socketListeners.forEach((socketListener) =>
+		this.socketListeners.forEach(socketListener =>
 			this.socket.removeListener(socketListener[0], socketListener[1]));
 		this.socketListeners = [];
 		this.socket.end();
